@@ -1,0 +1,31 @@
+.dest-section-container {
+    width: 100vw;
+    min-height: 100vh;
+    scroll-snap-align: start;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    font-size: 2rem;
+    color: white;
+    //background-color: aqua;
+    padding: 116px 00px 0px 0px;
+    margin: 0px 0px 20px 0px;
+    background-size: cover;
+    background-position: center;
+    box-sizing: border-box;
+}
+
+.dest-section-inner {
+    width: calc(92vw - 384px);
+    height: 82%;
+    background-color: aqua;
+    margin-left: 80px;
+    display: flex;
+    justify-content: space-between;
+}
+
+@media screen and (max-width: 787px) {
+    .dest-section-inner {
+        width: 74vw;
+    }
+}

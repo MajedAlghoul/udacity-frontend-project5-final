@@ -1,0 +1,27 @@
+<svg style="display:none;">
+    <symbol id="icon-x" viewBox="0 0 24 24">
+        <g filter="url(#filter0_d_475_15)">
+            <path d="M7.38478 5.38476L44.1543 42.1543M7.38478 42.1543L44.1543 5.38476"
+                stroke="white"
+                stroke-width="9" stroke-linecap="round" />
+        </g>
+        <defs>
+            <filter id="filter0_d_475_15" x="0.884766" y="0.884766" width="49.7695" height="49.7695"
+                filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feColorMatrix in="SourceAlpha" type="matrix"
+                    values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha" />
+                <feOffset dy="2" />
+                <feGaussianBlur stdDeviation="1" />
+                <feComposite in2="hardAlpha" operator="out" />
+                <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+                <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_475_15" />
+                <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_475_15"
+                    result="shape" />
+            </filter>
+        </defs>
+    </symbol>
+    <symbol id="icon-x-hover" viewBox="0 0 24 24">
+        <path d="M12 2l10 10h-7v8H9v-8H2z" />
+    </symbol>
+</svg>

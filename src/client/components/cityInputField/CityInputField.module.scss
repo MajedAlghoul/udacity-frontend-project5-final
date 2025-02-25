@@ -1,0 +1,76 @@
+.glass-card-outer-container {
+    border-radius: 32px;
+    background: rgba(0, 0, 0, 0.1);
+    background-repeat: repeat;
+    background-size: auto;
+    box-shadow:
+        0px 1px 0px 0px rgba(255, 255, 255, 0.25),
+        inset 0px 6px 20px 0 rgba(0, 0, 0, 0.25);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.input-field-input {
+    //background-color: #ffffff20;
+    width: 100%;
+    height: 100%;
+    background: none;
+    border-radius: 32px;
+    text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+    border: none;
+    outline: none;
+    color: #ffffffee;
+}
+
+.input-field-input::placeholder {
+    color: #ffffffaa;
+}
+
+.glass-card-outer-container {
+    position: relative;
+}
+
+.cityList {
+    z-index: 1000;
+    max-height: 194px;
+    overflow-y: auto;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    padding-right: 10px;
+}
+
+.cityListContainer {
+    position: absolute;
+    top: 126%;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 32px;
+    background: rgba(0, 0, 0, 0.1);
+    background-repeat: repeat;
+    background-size: auto;
+    box-shadow:
+        0px 1px 0px 0px rgba(255, 255, 255, 0.25),
+        inset 0px 6px 20px 0 rgba(0, 0, 0, 0.25);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 20px;
+    padding-left: 20px;
+    padding-bottom: 20px;
+}
+
+.cityList li {
+    padding: 10px 20px; /* Adds padding for each list item */
+    cursor: pointer; /* Indicates items are interactive */
+}
+
+.cityList li:hover {
+    background-color: #ffffff30; /* Highlights item on hover */
+    border-radius: 14px;
+}
+
+.glass-card-outer-container-output {
+}

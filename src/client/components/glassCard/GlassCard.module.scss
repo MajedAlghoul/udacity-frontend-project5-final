@@ -1,0 +1,20 @@
+.glass-card-outer-container {
+    border-radius: 32px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    background: rgba(43, 43, 43, 0.4);
+    background-image: url("../../assets/glassTexture.png");
+    background-repeat: repeat;
+    background-size: auto;
+    box-shadow:
+        -2px -2px 50px rgba(255, 255, 255, 0.6),
+        2px 2px 50px rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(40px);
+}
+
+.glass-card-inner-container {
+    //background-color: #ffffff20;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+}

@@ -1,0 +1,12 @@
+.header-container {
+    width: 100vw;
+    height: 60px;
+    max-height: 60px;
+    min-height: 60px;
+    //background-color: aqua;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    position: fixed;
+    z-index: 98;
+}

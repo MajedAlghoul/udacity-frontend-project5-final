@@ -1,0 +1,94 @@
+.trip-little-grid {
+    display: grid;
+    grid-template-columns: 5fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    gap: 10px 42px;
+}
+
+.trip-card-title {
+    margin-bottom: 10px;
+    font-size: 18px;
+    text-align: start;
+}
+
+.trip-card-title-container {
+    grid-area: 1 / 1 / 2 / 2;
+}
+
+.trip-card-dests-container {
+    display: flex;
+    justify-content: space-between;
+    grid-area: 2 / 1 / 3 / 2;
+    align-items: center;
+    font-size: 16px;
+    font-family: inherit;
+}
+
+.trip-card-departing-container {
+    display: flex;
+    justify-content: space-between;
+    grid-area: 3 / 1 / 4 / 2;
+    max-height: 40px;
+}
+
+.trip-card-sidebar {
+    display: flex;
+    justify-content: flex-start;
+    grid-area: 1 / 2 / 4 / 3;
+    position: relative;
+    height: 160px;
+    width: 60px;
+}
+
+.color-indicator {
+    background-color: chartreuse;
+    border-radius: 999px;
+    width: 26px;
+    height: 26px;
+}
+
+.trip-card-sidebar-separator-container {
+    display: flex;
+    position: absolute;
+    top: 182px;
+    right: -30px;
+    transform: translate(50%, -50%);
+    rotate: -90deg;
+}
+
+.inner-trip-card-sidebar-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: end;
+    width: 100%;
+}
+
+.trip-card-buttons {
+    width: 48px;
+    height: 48px;
+    background: none;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+}
+.trip-card-buttons-images {
+    width: 60%;
+    height: 60%;
+}
+
+.trip-card-button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    outline: none;
+    border-radius: 32px;
+    font-family: inherit;
+}
