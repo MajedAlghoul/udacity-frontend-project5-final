@@ -17,4 +17,19 @@
     align-self: start; /* Align it to the top */
     max-width: 300px;
     box-sizing: border-box;
+    cursor: default;
+}
+
+.todo-input {
+    //border: 1px solid #ffffff80;
+    padding: 6px 12px;
+    width: 162px;
+    background-color: #ffffff20;
+    border-radius: 6px;
+    border: none;
+    box-sizing: border-box;
+}
+
+.todo-input::placeholder {
+    color: #ffffffcc;
 }

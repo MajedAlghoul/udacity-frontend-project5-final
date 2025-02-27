@@ -9,7 +9,7 @@ import { use, useRef, useState } from "react";
 import tempimg from "../../assets/background.jpg";
 import noImageSvg from "../../assets/noimage.svg";
 // eslint-disable-next-line react/prop-types
-function DestCard({ id, city, dDate, hotel, image, clickFunction }) {
+function DestCard({ id, city, editDest, deleteDest, image, clickFunction }) {
   const xButton = useRef(null);
   const editButton = useRef(null);
   const changeOnHover = (reff, svgg) => {
@@ -21,7 +21,7 @@ function DestCard({ id, city, dDate, hotel, image, clickFunction }) {
       onClick={clickFunction}
       className={styles["trip-card-button"]}
     >
-      <GlassCard h={"260px"} w={"300px"} p="8px 8px">
+      <GlassCard h={"280px"} w={"340px"} p="8px 8px">
         <div
           style={{
             display: "flex",
@@ -61,6 +61,10 @@ function DestCard({ id, city, dDate, hotel, image, clickFunction }) {
                 onMouseOver={() => changeOnHover(editButton, edithoverSvg)}
                 onMouseLeave={() => changeOnHover(editButton, editSvg)}
                 className={styles["trip-card-buttons"]}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  editDest();
+                }}
               >
                 <img
                   className={styles["trip-card-buttons-images"]}
@@ -72,6 +76,10 @@ function DestCard({ id, city, dDate, hotel, image, clickFunction }) {
                 onMouseOver={() => changeOnHover(xButton, xhoverSvg)}
                 onMouseLeave={() => changeOnHover(xButton, xSvg)}
                 className={styles["trip-card-buttons"]}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteDest();
+                }}
               >
                 <img
                   className={styles["trip-card-buttons-images"]}

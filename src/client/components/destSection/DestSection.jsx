@@ -22,10 +22,10 @@ const DestSection = forwardRef(({ tId, dId, ...props }, ref) => {
       className={`${styles["dest-section-container"]} ${props.className || ""}`}
     >
       <div className={styles["dest-section-inner"]}>
-        <Weather></Weather>
-        <div>
-          <ETime></ETime>
-          <Hotel></Hotel>
+        <Weather tId={tId} dId={dId}></Weather>
+        <div style={{ display: "flex", flexDirection: "column", gap: "30px" }}>
+          <ETime tId={tId} dId={dId}></ETime>
+          <Hotel tId={tId} dId={dId}></Hotel>
         </div>
       </div>
     </div>

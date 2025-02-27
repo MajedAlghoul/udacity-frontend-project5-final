@@ -17,14 +17,15 @@ import { set } from "lodash";
 import axios from "axios";
 
 // eslint-disable-next-line react/prop-types
-function Popup({ closePopup, id, destMode }) {
+function Popup({ closePopup, id, destMode, editObject, setEditObject }) {
   const xButton = useRef(null);
   const addTripTitleRef = useRef(null);
   const [addTripDate, setAddTripDate] = useState("");
   const [content, setContent] = useState(null);
   const searchRef = useRef(null);
-  const { addTrip, trips, addDest } = useTrips();
+  const { addTrip, trips, addDest, editTrip } = useTrips();
   const [dateEnabled, setDateEnabled] = useState(true);
+  const [loc, setLoc] = useState(null);
   const hotelReff = useRef(null);
   const changeOnHover = (reff, svgg) => {
     reff.current.src = svgg;
@@ -33,15 +34,31 @@ function Popup({ closePopup, id, destMode }) {
 
   const addTripOnClick = useCallback(() => {
     let todo = null;
+    //console.log(todoCheckButton.current);
     if (todoCheckButton.current) {
-      todo = { count: 0, todos: [] };
+      todo = { count: 0, todos: {} };
     }
-    addTrip({
-      title: addTripTitleRef.current.value,
-      date: addTripDate,
-      dests: { count: 0, dests: [] },
-      todo: todo,
-    });
+    if (editObject !== null) {
+      let temp = { ...trips[editObject] };
+      temp.title = addTripTitleRef.current.value;
+      temp.date = addTripDate;
+      console.log("tf", todoCheckButton.current);
+      todoCheckButton.current
+        ? temp.todo === null
+          ? (temp.todo = todo)
+          : null
+        : (temp.todo = null);
+      //temp.todo = todo;
+      setEditObject(null);
+      editTrip(editObject, temp);
+    } else {
+      addTrip({
+        title: addTripTitleRef.current.value,
+        date: addTripDate,
+        dests: { count: 0, dests: [] },
+        todo: todo,
+      });
+    }
     closePopup(false);
   }, [addTrip, addTripDate, closePopup]);
 
@@ -53,11 +70,14 @@ function Popup({ closePopup, id, destMode }) {
         date: addTripDate,
         hotel: hotelReff.current.value,
         image: pic,
+        location: loc,
+        weather: null,
+        refreshDate: null,
       },
       id
     );
     closePopup(false);
-  }, [addTripDate, closePopup, id, addDest]);
+  }, [addTripDate, closePopup, id, addDest, loc]);
 
   const fetchPicture = async (q) => {
     const response = await axios.get(`http://localhost:8000/pic?query=${q}`);
@@ -104,7 +124,12 @@ function Popup({ closePopup, id, destMode }) {
             className={styles["popup-body-container"]}
           >
             <div className={styles["popup-body-left-container"]}>
-              <CityInputField searchRef={searchRef} w={"200px"} h={"26px"}>
+              <CityInputField
+                setLoc={setLoc}
+                searchRef={searchRef}
+                w={"200px"}
+                h={"26px"}
+              >
                 City
               </CityInputField>
             </div>
@@ -157,7 +182,10 @@ function Popup({ closePopup, id, destMode }) {
             </button>
             <span className={styles["popup-title-span"]}>add trip</span>
             <button
-              onClick={() => closePopup(false)}
+              onClick={() => {
+                setEditObject(null);
+                closePopup(false);
+              }}
               onMouseOver={() => changeOnHover(xButton, xhoverSvg)}
               onMouseLeave={() => changeOnHover(xButton, xSvg)}
               className={styles["trip-card-buttons"]}
@@ -177,11 +205,19 @@ function Popup({ closePopup, id, destMode }) {
             className={styles["popup-body-container"]}
           >
             <div className={styles["popup-body-left-container"]}>
-              <InputField reff={addTripTitleRef} w={"200px"} h={"26px"}>
+              <InputField
+                eValue={trips[editObject] ? trips[editObject].title : null}
+                reff={addTripTitleRef}
+                w={"200px"}
+                h={"26px"}
+              >
                 Trip title
               </InputField>
               <div style={{ marginTop: "18px" }}>
                 <CtaButtons
+                  eValue={
+                    trips[editObject] ? trips[editObject].todo !== null : null
+                  }
                   clickFunction={(tof) => {
                     todoCheckButton.current = tof;
                   }}
@@ -194,6 +230,7 @@ function Popup({ closePopup, id, destMode }) {
             </div>
             <div style={{ height: "290px" }}>
               <FancyDatePicker
+                eValue={trips[editObject] ? trips[editObject].date : null}
                 selectedDate={addTripDate}
                 onDateChange={setAddTripDate}
               >
@@ -212,6 +249,8 @@ function Popup({ closePopup, id, destMode }) {
     dateEnabled,
     trips,
     id,
+    editObject,
+    addDestOnClick,
   ]);
 
   return (

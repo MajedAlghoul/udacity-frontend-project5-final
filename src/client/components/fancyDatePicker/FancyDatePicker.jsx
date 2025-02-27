@@ -9,9 +9,16 @@ function FancyDatePicker({
   selectedDate,
   onDateChange,
   enabled = true,
+  eValue,
   children,
 }) {
   const [opened, setOpened] = useState(false);
+
+  useEffect(() => {
+    if (eValue !== null) {
+      onDateChange(eValue);
+    }
+  }, []);
 
   return (
     <div className={opened ? styles["fancy-datepicker-container"] : ""}>

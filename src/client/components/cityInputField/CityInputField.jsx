@@ -4,13 +4,14 @@ import { debounce } from "lodash";
 import axios from "axios";
 
 // eslint-disable-next-line react/prop-types
-function CityInputField({ searchRef, w, h, p = "6px 20px", children }) {
+function CityInputField({ searchRef, setLoc, w, h, p = "6px 20px", children }) {
   const [searchResult, setSearchResult] = useState(null);
   const [cityResult, setCityResult] = useState(null);
 
   useEffect(() => {
     const handleSelectCity = (city) => {
       searchRef.current.value = `${city.toponymName}, ${city.countryName}`;
+      setLoc({ lon: city.lng, lat: city.lat });
       setSearchResult(null);
     };
 
@@ -33,7 +34,7 @@ function CityInputField({ searchRef, w, h, p = "6px 20px", children }) {
     } else {
       setCityResult(null);
     }
-  }, [searchResult, searchRef]);
+  }, [searchResult, searchRef, setLoc]);
 
   const handleSearch = debounce(async (value) => {
     if (value === "") {

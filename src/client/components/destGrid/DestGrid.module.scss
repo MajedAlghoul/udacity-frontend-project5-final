@@ -3,8 +3,8 @@
     grid-template-columns: repeat(auto-fit, 350px); /* Dynamic columns */
     grid-auto-rows: minmax(310px, auto); /* Allow variable heights */
     gap: 10px;
-    justify-content: center;
-    padding: 300px 40px 100px 40px;
+    justify-content: start;
+    padding: 260px 80px 100px 80px;
     margin: 40px 0px 80px 0px;
     width: calc(100vw - 384px);
     min-height: 100vh;
@@ -14,7 +14,7 @@
     overflow: auto;
     //grid-column: 1 / 2;
     //background-color: aqua;
-    align-items: center;
+    align-items: start;
     //width: 90vw;
     box-sizing: border-box;
 }
@@ -23,8 +23,9 @@
     width: 0px;
 }
 
-@media screen and (max-width: 787px) {
+@media screen and (max-width: 1069px) {
     .dest-grid-container {
         width: 100vw;
+        justify-content: center;
     }
 }

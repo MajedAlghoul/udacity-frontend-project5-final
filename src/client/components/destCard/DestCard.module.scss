@@ -2,6 +2,10 @@
     margin-bottom: 10px;
     font-size: 18px;
     text-align: start;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
 }
 
 .trip-card-buttons {
@@ -41,6 +45,8 @@
     align-items: center;
     width: 100%;
     height: auto;
+    min-height: 200px;
+    max-height: 200px;
     //background-color: #f0f0f0;
     border-radius: 24px;
     overflow: hidden;

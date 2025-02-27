@@ -1,8 +1,5 @@
-import { use, useEffect, useRef, useState } from "react";
-import reactLogo from "../assets/react.svg";
-import viteLogo from "/vite.svg";
+import { useCallback, useRef, useState, useEffect } from "react";
 import "./App.scss";
-import GlassCard from "../components/glassCard/GlassCard";
 import NoItemsCard from "../components/noItemsCard/noItemsCard";
 import NavHeader from "../components/navHeader/NavHeader";
 import Buttons from "../components/buttons/Buttons";
@@ -18,109 +15,24 @@ import backArrowSvg from "../assets/backarrow.svg";
 import DestCard from "../components/destCard/DestCard";
 import DestSection from "../components/destSection/DestSection";
 import Todo from "../components/todo/Todo";
-import { set } from "lodash";
 
 function App() {
-  const [content, setContent] = useState(null);
-  const { trips, isTripsEmpty } = useTrips();
+  const { trips, isTripsEmpty, removeTrip, editTrip } = useTrips();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isDestViewOpen, setIsDestViewOpen] = useState(false);
   const [tripViewId, setTripViewId] = useState(null);
-  const [isDestGridInView, setIsDestGridInView] = useState(true);
   const sectionsRef = useRef({});
   const dGridRef = useRef(null);
-  const [dGridRefReady, setDGridRefReady] = useState(false);
-
-  const scrollToSection = (id) => {
-    sectionsRef.current[id]?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-    dGridRef.current.scrollTop = 0;
-  };
-
-  const enterDestView = (id) => {
-    setTripViewId(id);
-    setIsDestViewOpen(true);
-  };
+  const containerRef = useRef(null);
+  const [isDestGridInView, setIsDestGridInView] = useState(true);
+  const [hasDestinations, setHasDestinations] = useState(false);
+  const [holdEditTrip, setHoldEditTrip] = useState(null);
 
   useEffect(() => {
-    if (isDestViewOpen) {
-      if (trips[tripViewId].dests.count === 0) {
-        setContent(
-          <NoItemsCard w="auto" h="auto">
-            No Destinations planned
-          </NoItemsCard>
-        );
-      } else {
-        setContent(() => (
-          <>
-            <div className="trip-dest-container">
-              <div className="trip-dest-title">{trips[tripViewId].title}</div>
-              <DestGrid ref={dGridRef}>
-                {Object.entries(trips[tripViewId].dests.dests).map(
-                  ([id, dest]) => {
-                    return (
-                      <DestCard
-                        key={id}
-                        id={id}
-                        city={dest.city}
-                        dDate={format(dest.date, "do 'of' MMM'\n'yyyy")}
-                        hotel={dest.hotel}
-                        image={dest.image}
-                        clickFunction={() => scrollToSection(id)}
-                      ></DestCard>
-                    );
-                  }
-                )}
-              </DestGrid>
-            </div>
-            {Object.entries(trips[tripViewId].dests.dests).map(([id]) => {
-              return (
-                <DestSection
-                  ref={(el) => (sectionsRef.current[id] = el)}
-                  key={id}
-                  tId={tripViewId}
-                  dId={id}
-                ></DestSection>
-              );
-            })}
-            <div className="todo-container">
-              <Todo />
-            </div>
-          </>
-        ));
-        setDGridRefReady(dGridRef.current);
-        sectionsRef.current["dGrid"] = dGridRef.current;
-      }
-    } else {
-      if (isTripsEmpty()) {
-        setContent(
-          <NoItemsCard w="auto" h="auto">
-            No planned trips
-          </NoItemsCard>
-        );
-      } else {
-        setContent(() => (
-          <TripGrid>
-            {Object.entries(trips).map(([id, trip]) => {
-              return (
-                <TripCard
-                  key={id}
-                  id={id}
-                  title={trip.title}
-                  tDate={format(trip.date, "do 'of' MMM'\n'yyyy")}
-                  todo={trip.todo}
-                  dests={trip.dests}
-                  clickFunction={() => enterDestView(id)}
-                ></TripCard>
-              );
-            })}
-          </TripGrid>
-        ));
-      }
+    if (tripViewId !== null && trips[tripViewId]) {
+      setHasDestinations(trips[tripViewId].dests.count > 0);
     }
-  }, [isDestViewOpen, isTripsEmpty, tripViewId, trips, dGridRefReady]);
+  }, [trips, tripViewId]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -130,9 +42,12 @@ function App() {
       { threshold: 0.1 }
     );
 
-    const currentDGridRef = dGridRefReady;
+    if (isDestViewOpen) {
+      setIsDestGridInView(true);
+    }
 
-    if (currentDGridRef) {
+    const currentDGridRef = dGridRef.current;
+    if (currentDGridRef && isDestViewOpen) {
       observer.observe(currentDGridRef);
     }
 
@@ -141,7 +56,186 @@ function App() {
         observer.unobserve(currentDGridRef);
       }
     };
-  }, [dGridRefReady, isDestGridInView, isDestViewOpen]);
+  }, [dGridRef, isDestViewOpen, hasDestinations]);
+
+  const handlePopupClose = (isOpen) => {
+    setIsPopupOpen(isOpen);
+
+    if (!isOpen && tripViewId !== null && trips[tripViewId]) {
+      setHasDestinations(trips[tripViewId].dests.count > 0);
+    }
+  };
+
+  const scrollToTop = () => {
+    if (containerRef.current) {
+      containerRef.current.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    } else {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    }
+    setIsDestGridInView(true);
+  };
+
+  const scrollToSection = useCallback(
+    (id) => {
+      if (id === "top") {
+        scrollToTop();
+        return;
+      }
+
+      sectionsRef.current[id]?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    },
+    [sectionsRef]
+  );
+
+  const enterDestView = (id) => {
+    setTripViewId(id);
+    setIsDestViewOpen(true);
+    setIsDestGridInView(true);
+
+    if (trips[id]) {
+      setHasDestinations(trips[id].dests.count > 0);
+    }
+  };
+
+  const renderContent = () => {
+    if (isDestViewOpen && tripViewId !== null && trips[tripViewId]) {
+      if (!hasDestinations) {
+        return (
+          <>
+            <div
+              style={{
+                position: "absolute",
+                left: "32vw",
+                top: "32vh",
+                transform: "translate(-50%, 200%)",
+                width: "210px",
+              }}
+            >
+              <NoItemsCard w="auto" h="auto">
+                No Destinations planned
+              </NoItemsCard>
+            </div>
+            {trips[tripViewId].todo !== null && (
+              <div className="todo-container">
+                <Todo id={tripViewId} />
+              </div>
+            )}
+          </>
+        );
+      } else {
+        return (
+          <>
+            <div
+              className="trip-dest-container"
+              style={{ position: "relative" }}
+            >
+              <div className="trip-dest-title">{trips[tripViewId].title}</div>
+              <DestGrid ref={dGridRef} id="dGrid">
+                {Object.entries(trips[tripViewId].dests.dests).map(
+                  ([id, dest]) => (
+                    <DestCard
+                      key={id}
+                      id={id}
+                      city={dest.city}
+                      dDate={format(dest.date, "do 'of' MMM'\n'yyyy")}
+                      hotel={dest.hotel}
+                      image={dest.image}
+                      clickFunction={() => scrollToSection(id)}
+                    />
+                  )
+                )}
+              </DestGrid>
+              {Object.entries(trips[tripViewId].dests.dests).map(([id]) => (
+                <DestSection
+                  ref={(el) => (sectionsRef.current[id] = el)}
+                  key={id}
+                  tId={tripViewId}
+                  dId={id}
+                />
+              ))}
+            </div>
+            {trips[tripViewId].todo !== null && (
+              <div className="todo-container">
+                <Todo id={tripViewId} />
+              </div>
+            )}
+          </>
+        );
+      }
+    } else {
+      if (isTripsEmpty()) {
+        return (
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+            }}
+          >
+            <NoItemsCard w="auto" h="auto">
+              No planned trips
+            </NoItemsCard>
+          </div>
+        );
+      } else {
+        return (
+          <TripGrid>
+            {Object.entries(trips).map(([id, trip]) => (
+              <TripCard
+                key={id}
+                id={id}
+                title={trip.title}
+                tDate={trip.date}
+                todo={trip.todo}
+                dests={trip.dests}
+                clickFunction={() => enterDestView(id)}
+                deleteTrip={() => removeTrip(id)}
+                editTrip={() => {
+                  setIsPopupOpen(true);
+                  setHoldEditTrip(id);
+                }}
+              />
+            ))}
+          </TripGrid>
+        );
+      }
+    }
+  };
+
+  const getButtonText = () => {
+    if (isDestViewOpen && hasDestinations && !isDestGridInView) {
+      return "Back to top";
+    } else if (isDestViewOpen) {
+      return "New Destination";
+    } else {
+      return "New Trip";
+    }
+  };
+
+  const getButtonIcon = () => {
+    if (isDestViewOpen && hasDestinations && !isDestGridInView) {
+      return upArrowSvg;
+    }
+    return plusSvg;
+  };
+
+  const handleButtonClick = () => {
+    if (isDestViewOpen && hasDestinations && !isDestGridInView) {
+      scrollToTop();
+    } else {
+      setIsPopupOpen(true);
+    }
+  };
 
   return (
     <div className="app-outer-container">
@@ -149,8 +243,10 @@ function App() {
         <Popup
           id={tripViewId}
           destMode={isDestViewOpen}
-          closePopup={setIsPopupOpen}
-        ></Popup>
+          closePopup={handlePopupClose}
+          editObject={holdEditTrip}
+          setEditObject={setHoldEditTrip}
+        />
       )}
       <NavHeader>
         <div style={{ minWidth: "142px", marginLeft: "4vw" }}>
@@ -160,55 +256,37 @@ function App() {
               h="auto"
               clickFunction={() => {
                 setIsDestViewOpen(false);
-                setIsDestGridInView(true);
               }}
             >
               <img
                 width={"16px"}
                 height={"16px"}
                 src={backArrowSvg}
-                style={{
-                  marginRight: "8px",
-                }}
+                style={{ marginRight: "8px" }}
               />
               Back to trips
             </Buttons>
           )}
         </div>
         <div>
-          <Buttons
-            w="auto"
-            h="auto"
-            clickFunction={() => {
-              if (isDestViewOpen && !isDestGridInView) {
-                scrollToSection("dGrid");
-              } else {
-                setIsPopupOpen(true);
-              }
-            }}
-          >
+          <Buttons w="auto" h="auto" clickFunction={handleButtonClick}>
             <img
               width={"16px"}
               height={"16px"}
-              src={isDestViewOpen && !isDestGridInView ? upArrowSvg : plusSvg}
-              style={{
-                marginRight: "8px",
-              }}
+              src={getButtonIcon()}
+              style={{ marginRight: "8px" }}
             />
-            {isDestViewOpen && !isDestGridInView
-              ? "Back to top"
-              : isDestViewOpen
-              ? "New Destination"
-              : "New Trip"}
+            {getButtonText()}
           </Buttons>
         </div>
         <div style={{ minWidth: "142px", marginRight: "4vw" }}></div>
       </NavHeader>
       <div
+        ref={containerRef}
         className="app-inner-container"
         style={isDestViewOpen ? { alignItems: "flex-start" } : {}}
       >
-        {content}
+        {renderContent()}
       </div>
     </div>
   );

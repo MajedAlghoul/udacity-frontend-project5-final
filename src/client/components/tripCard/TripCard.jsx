@@ -6,11 +6,33 @@ import xhoverSvg from "../../assets/xhover.svg";
 import editSvg from "../../assets/edit.svg";
 import edithoverSvg from "../../assets/edithover.svg";
 import { useRef, useState } from "react";
-
+import { format } from "date-fns";
 // eslint-disable-next-line react/prop-types
-function TripCard({ id, title, tDate, todo, dests, clickFunction }) {
+function TripCard({
+  id,
+  title,
+  tDate,
+  dests,
+  clickFunction,
+  deleteTrip,
+  editTrip,
+}) {
   const xButton = useRef(null);
   const editButton = useRef(null);
+
+  const timeRemaining = Math.ceil(
+    (new Date(tDate) - new Date()) / (1000 * 60 * 60 * 24)
+  );
+
+  const getColor = () => {
+    if (timeRemaining <= 0) {
+      return "#FF2C2F";
+    } else if (timeRemaining < 3) {
+      return "#FFD900";
+    } else {
+      return "#83FF49";
+    }
+  };
   const changeOnHover = (reff, svgg) => {
     reff.current.src = svgg;
   };
@@ -21,7 +43,7 @@ function TripCard({ id, title, tDate, todo, dests, clickFunction }) {
       onClick={clickFunction}
       className={styles["trip-card-button"]}
     >
-      <GlassCard h={"170px"} w={"300px"} p="14px 20px">
+      <GlassCard h={"200px"} w={"360px"} p="14px 20px">
         <div className={styles["trip-little-grid"]}>
           <div className={styles["trip-card-title-container"]}>
             <div className={styles["trip-card-title"]}>{title}</div>
@@ -42,7 +64,7 @@ function TripCard({ id, title, tDate, todo, dests, clickFunction }) {
               }}
             >
               <span>Departing in</span>
-              <span> {dests.count} days</span>
+              <span> {timeRemaining || 0} days</span>
             </div>
             <span
               style={{
@@ -51,7 +73,7 @@ function TripCard({ id, title, tDate, todo, dests, clickFunction }) {
                 fontSize: "16px",
               }}
             >
-              {tDate}
+              {format(tDate, "do 'of' MMM'\n'yyyy")}
             </span>
           </div>
           <div className={styles["trip-card-sidebar"]}>
@@ -63,6 +85,10 @@ function TripCard({ id, title, tDate, todo, dests, clickFunction }) {
                 onMouseOver={() => changeOnHover(xButton, xhoverSvg)}
                 onMouseLeave={() => changeOnHover(xButton, xSvg)}
                 className={styles["trip-card-buttons"]}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteTrip();
+                }}
               >
                 <img
                   className={styles["trip-card-buttons-images"]}
@@ -74,6 +100,10 @@ function TripCard({ id, title, tDate, todo, dests, clickFunction }) {
                 onMouseOver={() => changeOnHover(editButton, edithoverSvg)}
                 onMouseLeave={() => changeOnHover(editButton, editSvg)}
                 className={styles["trip-card-buttons"]}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  editTrip();
+                }}
               >
                 <img
                   className={styles["trip-card-buttons-images"]}
@@ -89,7 +119,10 @@ function TripCard({ id, title, tDate, todo, dests, clickFunction }) {
                   justifyContent: "center",
                 }}
               >
-                <div className={styles["color-indicator"]}></div>
+                <div
+                  className={styles["color-indicator"]}
+                  style={{ backgroundColor: getColor() }}
+                ></div>
               </div>
             </div>
           </div>

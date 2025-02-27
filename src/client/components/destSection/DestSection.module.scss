@@ -17,15 +17,25 @@
 
 .dest-section-inner {
     width: calc(92vw - 384px);
-    height: 82%;
-    background-color: aqua;
+    height: 84%;
+    //background-color: aqua;
     margin-left: 80px;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
+    max-height: 400px;
+    //max-width: 800px;
+    gap: 80px;
 }
-
-@media screen and (max-width: 787px) {
+/*
+@media screen and (max-width: 1069px) {
+    .dest-section-inner {
+        flex-direction: column;
+    }
+}
+*/
+@media screen and (max-width: 1069px) {
     .dest-section-inner {
         width: 74vw;
+        justify-content: center;
     }
 }
