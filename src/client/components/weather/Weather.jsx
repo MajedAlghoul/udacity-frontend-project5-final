@@ -1,5 +1,3 @@
-import styles from "./Weather.module.scss";
-
 import GlassCard from "../glassCard/GlassCard";
 import { useTrips } from "../../hooks/useTrips";
 import { format } from "date-fns";
@@ -18,6 +16,9 @@ function getDaySuffix(day) {
   }
 }
 
+/*
+weather component that displays dest weather
+*/
 function Weather({ tId, dId }) {
   const { trips } = useTrips();
   const weather = trips[tId]?.dests?.dests[dId]?.weather || {};
@@ -40,7 +41,9 @@ function Weather({ tId, dId }) {
           }}
         >
           <div>
-            <div>{trips[tId].dests.dests[dId].city.split(",")[0]}</div>
+            <div style={{ textWrap: "nowrap", overflow: "hidden" }}>
+              {trips[tId].dests.dests[dId].city.split(",")[0]}
+            </div>
             <div style={{ fontSize: "24px" }}>{trips[tId].title}</div>
           </div>
           {Object.entries(weather).length === 0 ? (
@@ -48,7 +51,7 @@ function Weather({ tId, dId }) {
               style={{
                 fontSize: "16px",
                 textAlign: "center",
-                backgroundColor: "#ffffff60",
+                backgroundColor: "#ffffff20",
                 borderRadius: "14px",
                 padding: "10px",
                 height: "200px",

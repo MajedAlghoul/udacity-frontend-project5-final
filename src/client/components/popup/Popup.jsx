@@ -3,8 +3,6 @@ import Separator from "../separator/Separator";
 import styles from "./Popup.module.scss";
 import xSvg from "../../assets/x.svg";
 import xhoverSvg from "../../assets/xhover.svg";
-import editSvg from "../../assets/edit.svg";
-import edithoverSvg from "../../assets/edithover.svg";
 import { useCallback, useRef, useEffect, useState } from "react";
 import FancyDatePicker from "../fancyDatePicker/FancyDatePicker";
 import InputField from "../inputField/InputField";
@@ -12,9 +10,7 @@ import CtaButtons from "../ctaButtons/CtaButtons";
 import InputTextArea from "../inputTextArea/inputTextArea";
 import CityInputField from "../cityInputField/CityInputField";
 import { useTrips } from "../../hooks/useTrips";
-import { format } from "date-fns";
-import { set } from "lodash";
-import axios from "axios";
+import { format, startOfDay } from "date-fns";
 
 // eslint-disable-next-line react/prop-types
 function Popup({ closePopup, id, destMode, editObject, setEditObject }) {
@@ -23,75 +19,102 @@ function Popup({ closePopup, id, destMode, editObject, setEditObject }) {
   const [addTripDate, setAddTripDate] = useState("");
   const [content, setContent] = useState(null);
   const searchRef = useRef(null);
-  const { addTrip, trips, addDest, editTrip } = useTrips();
+  const { addTrip, trips, addDest, editTrip, editDest } = useTrips();
   const [dateEnabled, setDateEnabled] = useState(true);
   const [loc, setLoc] = useState(null);
   const hotelReff = useRef(null);
+  const [searchResult, setSearchResult] = useState(null);
+
+  //function that handles x button hover
   const changeOnHover = (reff, svgg) => {
     reff.current.src = svgg;
   };
   const todoCheckButton = useRef(false);
 
+  //function that handles trip addition/editing
   const addTripOnClick = useCallback(() => {
-    let todo = null;
-    //console.log(todoCheckButton.current);
-    if (todoCheckButton.current) {
-      todo = { count: 0, todos: {} };
-    }
-    if (editObject !== null) {
-      let temp = { ...trips[editObject] };
-      temp.title = addTripTitleRef.current.value;
-      temp.date = addTripDate;
-      console.log("tf", todoCheckButton.current);
-      todoCheckButton.current
-        ? temp.todo === null
-          ? (temp.todo = todo)
-          : null
-        : (temp.todo = null);
-      //temp.todo = todo;
-      setEditObject(null);
-      editTrip(editObject, temp);
+    if (addTripTitleRef.current.value === "") {
+      alert("please add trip title");
+    } else if (addTripDate === "") {
+      alert("please add departing date");
     } else {
-      addTrip({
-        title: addTripTitleRef.current.value,
-        date: addTripDate,
-        dests: { count: 0, dests: [] },
-        todo: todo,
-      });
+      let todo = null;
+      if (todoCheckButton.current) {
+        todo = { count: 0, todos: {} };
+      }
+      //handle trip editing
+      if (editObject !== null) {
+        let temp = { ...trips[editObject] };
+        temp.title = addTripTitleRef.current.value;
+        temp.date = addTripDate;
+        todoCheckButton.current
+          ? temp.todo === null
+            ? (temp.todo = todo)
+            : null
+          : (temp.todo = null);
+        editTrip(editObject, temp);
+      } else {
+        //handle trip addition
+        addTrip({
+          title: addTripTitleRef.current.value,
+          date: addTripDate,
+          dests: { count: 0, dests: [] },
+          todo: todo,
+        });
+      }
+      setEditObject(null);
+      closePopup(false);
     }
-    closePopup(false);
   }, [addTrip, addTripDate, closePopup]);
 
+  // function that handles dests addition/edit
   const addDestOnClick = useCallback(async () => {
-    const pic = await fetchPicture(searchRef.current.value);
-    addDest(
-      {
-        city: searchRef.current.value,
-        date: addTripDate,
-        hotel: hotelReff.current.value,
-        image: pic,
-        location: loc,
-        weather: null,
-        refreshDate: null,
-      },
-      id
-    );
-    closePopup(false);
-  }, [addTripDate, closePopup, id, addDest, loc]);
-
-  const fetchPicture = async (q) => {
-    const response = await axios.get(`http://localhost:8000/pic?query=${q}`);
-    console.log(response);
-    if (response.data) {
-      const img = response.data;
-      return img;
+    if (searchRef.current.value === "" || loc === null) {
+      alert("please add trip title");
+    } else if (addTripDate === "") {
+      alert("please add destination date");
     } else {
-      return null;
+      //handle dests edition
+      if (editObject !== null) {
+        let temp = { ...trips[id].dests.dests[editObject] };
+        if (temp.city !== searchRef.current.value) {
+          temp.location = loc;
+          temp.image = null;
+
+          temp.city = searchRef.current.value;
+        }
+        if (
+          startOfDay(new Date(temp.date)).getTime() !==
+          startOfDay(new Date(addTripDate)).getTime()
+        ) {
+          temp.weather = null;
+        }
+        temp.date = addTripDate;
+        temp.hotel = hotelReff.current.value;
+        editDest(id, editObject, temp);
+      } else {
+        //handle dest addition
+        addDest(
+          {
+            city: searchRef.current.value,
+            date: addTripDate,
+            hotel: hotelReff.current.value,
+            image: null,
+            location: loc,
+            weather: null,
+            refreshDate: null,
+          },
+          id
+        );
+      }
+      setEditObject(null);
+      closePopup(false);
     }
-  };
+  }, [addTripDate, closePopup, id, addDest, loc]);
 
   useEffect(() => {
     if (destMode) {
+      // popup add/edit dests interface
       setContent(
         <>
           <div className={styles["popup-title-container"]}>
@@ -99,9 +122,11 @@ function Popup({ closePopup, id, destMode, editObject, setEditObject }) {
               onClick={addDestOnClick}
               className={styles["popup-add-button"]}
             >
-              Add
+              {editObject !== null ? "Edit" : "Add"}
             </button>
-            <span className={styles["popup-title-span"]}>Add Destination</span>
+            <span className={styles["popup-title-span"]}>
+              {editObject !== null ? "Edit Destination" : "Add Destination"}
+            </span>
             <button
               onClick={() => closePopup(false)}
               onMouseOver={() => changeOnHover(xButton, xhoverSvg)}
@@ -119,16 +144,31 @@ function Popup({ closePopup, id, destMode, editObject, setEditObject }) {
             <Separator w={"100%"}></Separator>
           </div>
 
-          <div
-            //style={{ backgroundColor: "red" }}
-            className={styles["popup-body-container"]}
-          >
-            <div className={styles["popup-body-left-container"]}>
+          <div className={styles["popup-body-container"]}>
+            <div
+              className={`${styles["popup-body-left-container"]} ${
+                searchResult !== null
+                  ? styles["popup-body-left-container-opened"]
+                  : ""
+              }`}
+            >
               <CityInputField
                 setLoc={setLoc}
+                eLoc={
+                  trips[id].dests.dests[editObject] && trips[id]
+                    ? trips[id].dests.dests[editObject].location
+                    : null
+                }
                 searchRef={searchRef}
                 w={"200px"}
                 h={"26px"}
+                cityResult={searchResult}
+                setCityResult={(e) => setSearchResult(e)}
+                eValue={
+                  trips[id].dests.dests[editObject] && trips[id]
+                    ? trips[id].dests.dests[editObject].city
+                    : null
+                }
               >
                 City
               </CityInputField>
@@ -138,6 +178,14 @@ function Popup({ closePopup, id, destMode, editObject, setEditObject }) {
                 selectedDate={addTripDate}
                 onDateChange={setAddTripDate}
                 enabled={dateEnabled}
+                minDate={
+                  new Date(Math.max(new Date(trips[id].date), new Date()))
+                }
+                eValue={
+                  trips[id].dests.dests[editObject] && trips[id]
+                    ? trips[id].dests.dests[editObject].date
+                    : null
+                }
               >
                 Check-in date
               </FancyDatePicker>
@@ -146,8 +194,6 @@ function Popup({ closePopup, id, destMode, editObject, setEditObject }) {
                 <CtaButtons
                   clickFunction={(tof) => {
                     if (tof) {
-                      console.log(trips[id].date);
-
                       setAddTripDate(format(trips[id].date, "MMMM d, yyyy"));
                       setDateEnabled(false);
                     } else {
@@ -157,12 +203,29 @@ function Popup({ closePopup, id, destMode, editObject, setEditObject }) {
                   }}
                   w={"150px"}
                   h={"36px"}
+                  eValue={
+                    trips[id].dests.dests[editObject] && trips[id]
+                      ? new Date(
+                          trips[id].dests.dests[editObject].date
+                        ).toDateString() ===
+                        new Date(trips[id].date).toDateString()
+                      : null
+                  }
                 >
                   Use departing date
                 </CtaButtons>
               </div>
               <div style={{ marginTop: "18px" }}>
-                <InputTextArea reff={hotelReff} w={"200px"} h={"200px"}>
+                <InputTextArea
+                  reff={hotelReff}
+                  w={"200px"}
+                  h={"200px"}
+                  eValue={
+                    trips[id].dests.dests[editObject] && trips[id]
+                      ? trips[id].dests.dests[editObject].hotel
+                      : null
+                  }
+                >
                   Hotel info
                 </InputTextArea>
               </div>
@@ -171,6 +234,7 @@ function Popup({ closePopup, id, destMode, editObject, setEditObject }) {
         </>
       );
     } else {
+      // popup interface for adding/editing trips
       setContent(
         <>
           <div className={styles["popup-title-container"]}>
@@ -178,9 +242,11 @@ function Popup({ closePopup, id, destMode, editObject, setEditObject }) {
               onClick={addTripOnClick}
               className={styles["popup-add-button"]}
             >
-              Add
+              {editObject !== null ? "Edit" : "Add"}
             </button>
-            <span className={styles["popup-title-span"]}>add trip</span>
+            <span className={styles["popup-title-span"]}>
+              {editObject !== null ? "Edit trip" : "Add trip"}
+            </span>
             <button
               onClick={() => {
                 setEditObject(null);
@@ -233,6 +299,7 @@ function Popup({ closePopup, id, destMode, editObject, setEditObject }) {
                 eValue={trips[editObject] ? trips[editObject].date : null}
                 selectedDate={addTripDate}
                 onDateChange={setAddTripDate}
+                minDate={new Date()}
               >
                 Departing date
               </FancyDatePicker>
@@ -251,6 +318,8 @@ function Popup({ closePopup, id, destMode, editObject, setEditObject }) {
     id,
     editObject,
     addDestOnClick,
+    searchResult,
+    loc,
   ]);
 
   return (

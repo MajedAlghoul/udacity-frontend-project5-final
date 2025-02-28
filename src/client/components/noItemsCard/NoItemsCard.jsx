@@ -1,5 +1,4 @@
 import GlassCard from "../glassCard/GlassCard";
-import styles from "./NoItemsCard.module.scss";
 
 // eslint-disable-next-line react/prop-types
 function NoItemsCard({ w = "200px", h = "200px", children }) {

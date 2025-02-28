@@ -5,11 +5,10 @@ import xSvg from "../../assets/x.svg";
 import xhoverSvg from "../../assets/xhover.svg";
 import editSvg from "../../assets/edit.svg";
 import edithoverSvg from "../../assets/edithover.svg";
-import { use, useRef, useState } from "react";
-import tempimg from "../../assets/background.jpg";
+import { useRef } from "react";
 import noImageSvg from "../../assets/noimage.svg";
 // eslint-disable-next-line react/prop-types
-function DestCard({ id, city, editDest, deleteDest, image, clickFunction }) {
+function DestCard({ city, editDest, deleteDest, image, clickFunction }) {
   const xButton = useRef(null);
   const editButton = useRef(null);
   const changeOnHover = (reff, svgg) => {
@@ -21,7 +20,7 @@ function DestCard({ id, city, editDest, deleteDest, image, clickFunction }) {
       onClick={clickFunction}
       className={styles["trip-card-button"]}
     >
-      <GlassCard h={"280px"} w={"340px"} p="8px 8px">
+      <GlassCard h={"280px"} w={"min(340px,86vw)"} minW="300px" p="8px 8px">
         <div
           style={{
             display: "flex",

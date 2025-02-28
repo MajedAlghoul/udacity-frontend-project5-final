@@ -13,21 +13,21 @@
     //background-color: rgb(21, 73, 73);
     justify-content: space-between;
     position: relative;
+    align-items: start;
 }
 
 .popup-absolute-container {
-    transform: translate(0%, 4%);
-    position: absolute;
+    transform: translate(-50%, -50%);
+    position: fixed;
     z-index: 99;
-    width: 94vw;
-    height: 94vh; /* Ensure height can adjust based on content */
-    max-height: 90vh; /* Maximum height of the container */
+    top: 50%;
+    left: 50%;
+    width: calc(100vw - 24px);
+    height: calc(100vh - 24px);
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 600px; /* Minimum height to ensure it doesn't shrink too much */
-    //overflow-y: auto; /* Enable vertical scrolling */
-    //padding: 10px; /* Optional: Add some padding for better visual */
+    min-height: 600px;
 }
 
 .trip-card-buttons {
@@ -63,7 +63,11 @@
     transform: translate(-50%, 50%);
     left: 50%;
     top: -10px;
-    font-size: 20px;
+    font-size: min(20px, 1rem);
+    text-align: center;
+    max-width: 100px;
+    text-align: center;
+    height: 50%;
 }
 
 .popup-body-container {
@@ -75,6 +79,7 @@
     align-items: flex-start;
     overflow-y: auto;
     max-height: 90vh;
+    gap: 20px;
 }
 
 .popup-body-left-container {
@@ -82,15 +87,23 @@
     flex-direction: column;
     margin-right: 80px;
     align-items: end;
+    //min-height: 200px;
+    height: auto;
+    gap: 18px;
 }
 @media screen and (max-width: 600px) {
     .popup-body-container {
         flex-direction: column;
         align-items: center;
+        justify-content: flex-start;
     }
     .popup-body-left-container {
         margin-right: 0px;
-        margin-bottom: 20px;
+        //margin-bottom: 20px;
+        margin-top: 20px;
+    }
+    .popup-body-left-container-opened {
+        min-height: 280px;
     }
 }
 

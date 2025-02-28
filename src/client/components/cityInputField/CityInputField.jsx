@@ -1,13 +1,28 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./CityInputField.module.scss";
 import { debounce } from "lodash";
 import axios from "axios";
 
 // eslint-disable-next-line react/prop-types
-function CityInputField({ searchRef, setLoc, w, h, p = "6px 20px", children }) {
+function CityInputField({
+  searchRef,
+  setLoc,
+  eLoc,
+  w,
+  h,
+  p = "6px 20px",
+  cityResult,
+  setCityResult,
+  eValue,
+  children,
+}) {
   const [searchResult, setSearchResult] = useState(null);
-  const [cityResult, setCityResult] = useState(null);
 
+  useEffect(() => {
+    if (eValue !== null) {
+      setLoc(eLoc);
+    }
+  }, []);
   useEffect(() => {
     const handleSelectCity = (city) => {
       searchRef.current.value = `${city.toponymName}, ${city.countryName}`;
@@ -36,6 +51,7 @@ function CityInputField({ searchRef, setLoc, w, h, p = "6px 20px", children }) {
     }
   }, [searchResult, searchRef, setLoc]);
 
+  // convert text input into city info and uses debouncing to delay query for half a second
   const handleSearch = debounce(async (value) => {
     if (value === "") {
       setSearchResult(null);
@@ -44,9 +60,9 @@ function CityInputField({ searchRef, setLoc, w, h, p = "6px 20px", children }) {
     const sResults = await axios.get(
       `http://localhost:8000/city?city=${value}`
     );
-    //console.log(sResults);
     setSearchResult(sResults.data);
   }, 500);
+
   return (
     <div
       style={{ width: w, height: h, padding: p }}
@@ -58,8 +74,10 @@ function CityInputField({ searchRef, setLoc, w, h, p = "6px 20px", children }) {
         placeholder={children}
         ref={searchRef}
         onChange={(e) => {
+          setLoc(null);
           handleSearch(e.target.value);
         }}
+        defaultValue={eValue !== null ? eValue : ""}
       />
 
       {cityResult}

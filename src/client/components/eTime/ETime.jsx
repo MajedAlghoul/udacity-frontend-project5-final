@@ -1,5 +1,3 @@
-import styles from "./ETime.module.scss";
-
 import GlassCard from "../glassCard/GlassCard";
 import { useTrips } from "../../hooks/useTrips";
 function ETime({ tId, dId }) {
@@ -10,25 +8,39 @@ function ETime({ tId, dId }) {
   );
 
   const getColor = () => {
-    if (timeRemaining <= 0) {
+    if (timeRemaining < 0) {
       return "#FF2C2F";
-    } else if (timeRemaining < 3) {
+    } else if (timeRemaining >= 1) {
       return "#FFD900";
     } else {
       return "#83FF49";
     }
   };
   return (
-    <div style={{ width: "auto", height: "60px", minWidth: "260px" }}>
+    <div
+      style={{
+        width: "300px",
+        height: "60px",
+        minWidth: "260px",
+        maxWidth: "360px",
+      }}
+    >
       <GlassCard h={"100%"} w={"100%"} p="8px 8px 8px 32px">
         <div
           style={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            height: "100%",
           }}
         >
-          <div style={{ fontSize: "20px" }}>{`In ${timeRemaining} days`}</div>
+          <div style={{ fontSize: "20px" }}>
+            {timeRemaining < 0
+              ? `${Math.abs(timeRemaining)} days ago`
+              : timeRemaining === 0
+              ? "Today"
+              : `In ${timeRemaining} days`}
+          </div>
           <div
             style={{
               backgroundColor: getColor(),
@@ -36,6 +48,7 @@ function ETime({ tId, dId }) {
               height: "32px",
               borderRadius: "50%",
               marginLeft: "16px",
+              marginRight: "8px",
             }}
           ></div>
         </div>

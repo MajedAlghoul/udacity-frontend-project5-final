@@ -1,7 +1,7 @@
 import styles from "./InputTextArea.module.scss";
 
 // eslint-disable-next-line react/prop-types
-function InputTextArea({ reff, w, h, p = "6px 20px", children }) {
+function InputTextArea({ reff, w, h, p = "6px 20px", eValue, children }) {
   return (
     <div
       style={{ width: w, height: h, padding: p }}
@@ -12,6 +12,7 @@ function InputTextArea({ reff, w, h, p = "6px 20px", children }) {
         type="text"
         placeholder={children}
         ref={reff}
+        defaultValue={eValue !== null ? eValue : ""}
       />
     </div>
   );

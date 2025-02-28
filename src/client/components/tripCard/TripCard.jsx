@@ -25,9 +25,9 @@ function TripCard({
   );
 
   const getColor = () => {
-    if (timeRemaining <= 0) {
+    if (timeRemaining < 0) {
       return "#FF2C2F";
-    } else if (timeRemaining < 3) {
+    } else if (timeRemaining >= 1) {
       return "#FFD900";
     } else {
       return "#83FF49";
@@ -43,7 +43,13 @@ function TripCard({
       onClick={clickFunction}
       className={styles["trip-card-button"]}
     >
-      <GlassCard h={"200px"} w={"360px"} p="14px 20px">
+      <GlassCard
+        h={"200px"}
+        w={"auto"}
+        minW={"200px"}
+        maxW={"360px"}
+        p="14px 20px"
+      >
         <div className={styles["trip-little-grid"]}>
           <div className={styles["trip-card-title-container"]}>
             <div className={styles["trip-card-title"]}>{title}</div>
@@ -63,18 +69,41 @@ function TripCard({
                 fontSize: "16px",
               }}
             >
-              <span>Departing in</span>
-              <span> {timeRemaining || 0} days</span>
+              <span>
+                {timeRemaining < 0
+                  ? `${Math.abs(timeRemaining)}`
+                  : timeRemaining === 0
+                  ? "Departing"
+                  : `Departing in`}
+              </span>
+              <span>
+                {(timeRemaining < 0
+                  ? `days ago`
+                  : timeRemaining === 0
+                  ? "Today"
+                  : `${timeRemaining} days`) || "0 days"}
+              </span>
             </div>
-            <span
-              style={{
-                textAlign: "end",
-                flex: "0 1 auto",
-                fontSize: "16px",
-              }}
-            >
-              {format(tDate, "do 'of' MMM'\n'yyyy")}
-            </span>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <span
+                style={{
+                  textAlign: "end",
+                  flex: "0 1 auto",
+                  fontSize: "16px",
+                }}
+              >
+                {format(tDate, "do 'of' MMM")}
+              </span>
+              <span
+                style={{
+                  textAlign: "end",
+                  flex: "0 1 auto",
+                  fontSize: "16px",
+                }}
+              >
+                {format(tDate, "yyyy")}
+              </span>
+            </div>
           </div>
           <div className={styles["trip-card-sidebar"]}>
             <div className={styles["trip-card-sidebar-separator-container"]}>

@@ -20,6 +20,7 @@
   width: 100vw;
   height: 100vh;
   scroll-snap-type: y mandatory;
+  position: relative;
 }
 
 .todo-container {
@@ -35,12 +36,13 @@
 }
 
 .trip-dest-title {
-  font-size: 60px;
+  font-size: min(12vw, 60px);
   position: absolute;
-  left: 4%;
-  top: min(170px, 24vh);
+  left: 240px;
+  top: min(130px, 24vh);
   text-align: center;
   text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
+  transform: translate(-50%, 50%);
 }
 
 .trip-dest-container {
@@ -58,12 +60,17 @@
   }
   .trip-dest-title {
     left: 50%;
-    transform: translateX(-50%);
     width: 90vw;
   }
 }
 
-@media screen and (max-width: 913px) {
+@media screen and (max-width: 500px) {
+  .back-button-text {
+    display: none;
+  }
+  .nav-buttons-minwidth {
+    min-width: 68px !important;
+  }
 }
 
 ::-webkit-scrollbar {

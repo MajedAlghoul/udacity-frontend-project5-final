@@ -9,19 +9,13 @@
     outline: none;
     border-radius: 32px;
     font-family: inherit;
-    //background: red;
-
-    /* Placing it in the last column (right), starting at the first row */
-    //grid-column: -1 / -2; /* Takes up 1 column */
-    //grid-row: 1 / 10; /* Starts at row 1 and spans all rows */
-    align-self: start; /* Align it to the top */
+    align-self: start;
     max-width: 300px;
     box-sizing: border-box;
     cursor: default;
 }
 
 .todo-input {
-    //border: 1px solid #ffffff80;
     padding: 6px 12px;
     width: 162px;
     background-color: #ffffff20;

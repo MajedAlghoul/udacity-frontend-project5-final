@@ -6,10 +6,9 @@ import dotenv from "dotenv";
 
 dotenv.config(); // Load environment variables from .env
 
-//console.log(process.env); // Debugging: See all loaded env variables
-// loads diffbot api key from .env file
-
 // eslint-disable-next-line no-undef
+
+//load required api information from .env file
 const geoinfoUsername = process.env.GEO_INFO_API_USERNAME;
 
 const pixabayAPIKey = process.env.PIXABAY_API_KEY;
@@ -29,16 +28,12 @@ app.get("/", function (req, res) {
   );
 });
 
+//weather route to get weather information for a location
 app.get("/weather", async (req, res) => {
   try {
-    //console.log("happening");
-    // recieve the article URL from the client
     const lon = req.query.lon;
     const lat = req.query.lat;
-    //console.log(city);
-    // analyze article from the URL
     const result = await weatherRequest(lon, lat);
-    //console.log(result);
     res.json(result);
   } catch (error) {
     console.error(error);
@@ -48,15 +43,11 @@ app.get("/weather", async (req, res) => {
   }
 });
 
+// pic route to get a picture of the current city
 app.get("/pic", async (req, res) => {
   try {
-    //console.log("happening");
-    // recieve the article URL from the client
     const city = req.query.query;
-    //console.log(city);
-    // analyze article from the URL
     const result = await pictureRequest(city);
-    //console.log(result);
     res.json(result);
   } catch (error) {
     console.error(error);
@@ -66,15 +57,13 @@ app.get("/pic", async (req, res) => {
   }
 });
 
+//city route to get cities suggestions from text
 app.get("/city", async (req, res) => {
   try {
-    //console.log("happening");
-    // recieve the article URL from the client
     const city = req.query.city;
-    //console.log(city);
-    // analyze article from the URL
+
     const result = await searchRequest(city);
-    //console.log(result);
+
     res.json(result);
   } catch (error) {
     console.error(error);
@@ -87,17 +76,17 @@ app.listen(8000, function () {
   console.log("Example app listening on port 8000!");
 });
 
+// method to request 7-day weather information from lat and lon by weatherbit
 async function weatherRequest(long, lat) {
   try {
     console.log(weatherbitAPIKey, long, lat);
     const weatherbitUrl = `https://api.weatherbit.io/v2.0/forecast/daily?key=${weatherbitAPIKey}&lon=${long}&lat=${lat}`;
 
-    // make a GET request to pixabay
+    // make a GET request to weatherbit
     const response = await axios.get(weatherbitUrl);
 
     if (response && response.data.data.length > 0) {
       const weather = response.data.data;
-      //console.log(response.data.hits[0]);
       return weather;
     } else {
       return null;
@@ -107,6 +96,7 @@ async function weatherRequest(long, lat) {
   }
 }
 
+// method to request a picture about the selected city
 async function pictureRequest(city) {
   try {
     const pixabayUrl = `https://pixabay.com/api/?key=${pixabayAPIKey}&q=${city}&image_type=photo`;
@@ -116,7 +106,6 @@ async function pictureRequest(city) {
 
     if (response && response.data.hits.length > 0) {
       const img = response.data.hits[0].largeImageURL;
-      //console.log(response.data.hits[0]);
       return img;
     } else {
       return null;
@@ -126,16 +115,14 @@ async function pictureRequest(city) {
   }
 }
 
+// method to request cities information from text search by geonames.org
 async function searchRequest(city) {
   try {
     const geoinfoUrl = `http://api.geonames.org/searchJSON?q=${city}&maxRows=10&username=${geoinfoUsername}`;
 
-    // make a GET request to diffbot
     const response = await axios.get(geoinfoUrl);
 
     const citiesData = response.data.geonames;
-    //console.log(citiesData);
-    //checks if nothing was returned
     if (!citiesData) {
       console.log("No results found");
       return {};

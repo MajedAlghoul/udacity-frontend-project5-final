@@ -1,4 +1,3 @@
-import GlassCard from "../glassCard/GlassCard";
 import styles from "./Separator.module.scss";
 
 // eslint-disable-next-line react/prop-types

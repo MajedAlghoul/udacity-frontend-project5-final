@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import GlassCard from "../glassCard/GlassCard";
 import styles from "./CtaButtons.module.scss";
 
 // eslint-disable-next-line react/prop-types
@@ -24,7 +23,6 @@ function CtaButtons({
       } else {
         setToggled("actual-button-style-clicked");
       }
-      console.log("hmm", eValue);
       setClicked(eValue);
       clickFunction(eValue);
     }
@@ -41,7 +39,6 @@ function CtaButtons({
     <button
       onClick={() => {
         toggleStyle();
-        console.log(clicked);
         clickFunction(!clicked);
       }}
       className={styles["actual-button"]}

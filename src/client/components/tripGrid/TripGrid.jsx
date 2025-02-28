@@ -1,4 +1,3 @@
-import GlassCard from "../glassCard/GlassCard";
 import styles from "./TripGrid.module.scss";
 
 // eslint-disable-next-line react/prop-types

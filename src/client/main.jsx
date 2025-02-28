@@ -11,3 +11,15 @@ createRoot(document.getElementById("root")).render(
   </TripsProvider>
   //</StrictMode>
 );
+
+// register service worker
+if (import.meta.env.PROD && "serviceWorker" in navigator) {
+  navigator.serviceWorker
+    .register("/service-worker.js")
+    .then((registration) => {
+      console.log("Service worker registered:", registration);
+    })
+    .catch((error) => {
+      console.error("Service worker registration failed:", error);
+    });
+}

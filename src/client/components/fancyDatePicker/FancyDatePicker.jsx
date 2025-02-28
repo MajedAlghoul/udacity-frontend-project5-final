@@ -1,5 +1,3 @@
-import { set } from "lodash";
-import GlassCard from "../glassCard/GlassCard";
 import styles from "./FancyDatePicker.module.scss";
 import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
@@ -10,6 +8,7 @@ function FancyDatePicker({
   onDateChange,
   enabled = true,
   eValue,
+  minDate,
   children,
 }) {
   const [opened, setOpened] = useState(false);
@@ -24,6 +23,7 @@ function FancyDatePicker({
     <div className={opened ? styles["fancy-datepicker-container"] : ""}>
       <DatePicker
         key={selectedDate}
+        minDate={minDate}
         selected={selectedDate}
         onChange={(date) => {
           onDateChange(date);

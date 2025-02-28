@@ -5,13 +5,14 @@
     gap: 10px;
     justify-content: start;
     padding: 260px 80px 100px 80px;
-    margin: 40px 0px 80px 0px;
+    margin: clamp(10px, 40px, 5vw) 0px clamp(20px, 80px, 10vw) 0px;
     width: calc(100vw - 384px);
     min-height: 100vh;
     scroll-snap-align: start;
     font-size: 2rem;
     color: white;
     overflow: auto;
+    overflow-x: hidden;
     //grid-column: 1 / 2;
     //background-color: aqua;
     align-items: start;
@@ -27,5 +28,6 @@
     .dest-grid-container {
         width: 100vw;
         justify-content: center;
+        align-self: start !important;
     }
 }

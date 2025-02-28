@@ -16,8 +16,35 @@ import DestCard from "../components/destCard/DestCard";
 import DestSection from "../components/destSection/DestSection";
 import Todo from "../components/todo/Todo";
 
+/*
+this is the main app function that contains the content to display the trips and dests grids
+it uses different components to achieve this,
+
+mainly theres a
+
+navbar component for the navbar
+tripsgrid component for the trips grid
+tripcard component for showing a trip info
+destgrid component for showing the dests grid
+destcard component for showing the image and name of the dest
+destsection component which displays weather and more info about a dest
+
+and most importantly the popup component which handles the addition editing of trips / dests
+
+almost all components rely on glasscard component which is the fancy glass like effect card
+
+some important components are the cityinput and facncy datepicker
+
+cityinput component wraps a text input and intigrates the geoinfo api by contacting the express server
+to display suggestions
+
+fancydatepicker component relies on the package react-datepicker which is a nice gui date picker
+
+i made most of the icons used,
+*/
+
 function App() {
-  const { trips, isTripsEmpty, removeTrip, editTrip } = useTrips();
+  const { trips, isTripsEmpty, removeTrip, removeDest } = useTrips();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isDestViewOpen, setIsDestViewOpen] = useState(false);
   const [tripViewId, setTripViewId] = useState(null);
@@ -28,12 +55,15 @@ function App() {
   const [hasDestinations, setHasDestinations] = useState(false);
   const [holdEditTrip, setHoldEditTrip] = useState(null);
 
+  //use effect to keep up with the fact that the current trip has dests or not
   useEffect(() => {
     if (tripViewId !== null && trips[tripViewId]) {
       setHasDestinations(trips[tripViewId].dests.count > 0);
     }
   }, [trips, tripViewId]);
 
+  //use effect that observes the dests grid to switch the main button from adding dests / going up based
+  // on if the dests grid is in view
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -58,6 +88,7 @@ function App() {
     };
   }, [dGridRef, isDestViewOpen, hasDestinations]);
 
+  // function to close popup for adding/editing trips/dests
   const handlePopupClose = (isOpen) => {
     setIsPopupOpen(isOpen);
 
@@ -66,6 +97,7 @@ function App() {
     }
   };
 
+  //function to scroll up to the dests grid
   const scrollToTop = () => {
     if (containerRef.current) {
       containerRef.current.scrollTo({
@@ -81,6 +113,7 @@ function App() {
     setIsDestGridInView(true);
   };
 
+  // function to scroll to a dest section by clicking at its card in the dests grid
   const scrollToSection = useCallback(
     (id) => {
       if (id === "top") {
@@ -96,6 +129,7 @@ function App() {
     [sectionsRef]
   );
 
+  //function to conditionally switch between the app two main sections, trips and dests
   const enterDestView = (id) => {
     setTripViewId(id);
     setIsDestViewOpen(true);
@@ -106,17 +140,19 @@ function App() {
     }
   };
 
+  //function to provide content for the app two main sections, trips and dests
   const renderContent = () => {
     if (isDestViewOpen && tripViewId !== null && trips[tripViewId]) {
       if (!hasDestinations) {
+        // displays no dests available
         return (
           <>
             <div
               style={{
                 position: "absolute",
-                left: "32vw",
-                top: "32vh",
-                transform: "translate(-50%, 200%)",
+                left: "50%",
+                top: "50%",
+                transform: "translate(-50%, 50%)",
                 width: "210px",
               }}
             >
@@ -132,14 +168,20 @@ function App() {
           </>
         );
       } else {
+        // displays dests for trips, dests menu
         return (
           <>
             <div
               className="trip-dest-container"
               style={{ position: "relative" }}
             >
-              <div className="trip-dest-title">{trips[tripViewId].title}</div>
-              <DestGrid ref={dGridRef} id="dGrid">
+              <div
+                className="trip-dest-title"
+                style={trips[tripViewId].todo === null ? { left: "50%" } : {}}
+              >
+                {trips[tripViewId].title}
+              </div>
+              <DestGrid tId={tripViewId} ref={dGridRef} id="dGrid">
                 {Object.entries(trips[tripViewId].dests.dests).map(
                   ([id, dest]) => (
                     <DestCard
@@ -150,6 +192,11 @@ function App() {
                       hotel={dest.hotel}
                       image={dest.image}
                       clickFunction={() => scrollToSection(id)}
+                      deleteDest={() => removeDest(tripViewId, id)}
+                      editDest={() => {
+                        setIsPopupOpen(true);
+                        setHoldEditTrip(id);
+                      }}
                     />
                   )
                 )}
@@ -173,6 +220,7 @@ function App() {
       }
     } else {
       if (isTripsEmpty()) {
+        // shows no trips available
         return (
           <div
             style={{
@@ -188,6 +236,7 @@ function App() {
           </div>
         );
       } else {
+        // the trips grid, the trips display menu
         return (
           <TripGrid>
             {Object.entries(trips).map(([id, trip]) => (
@@ -212,6 +261,7 @@ function App() {
     }
   };
 
+  //function to get main button text
   const getButtonText = () => {
     if (isDestViewOpen && hasDestinations && !isDestGridInView) {
       return "Back to top";
@@ -222,6 +272,7 @@ function App() {
     }
   };
 
+  //function to switch main button icon
   const getButtonIcon = () => {
     if (isDestViewOpen && hasDestinations && !isDestGridInView) {
       return upArrowSvg;
@@ -229,6 +280,7 @@ function App() {
     return plusSvg;
   };
 
+  // function to handle main button or new trip/dest / go up button
   const handleButtonClick = () => {
     if (isDestViewOpen && hasDestinations && !isDestGridInView) {
       scrollToTop();
@@ -249,7 +301,10 @@ function App() {
         />
       )}
       <NavHeader>
-        <div style={{ minWidth: "142px", marginLeft: "4vw" }}>
+        <div
+          style={{ marginLeft: "4vw", minWidth: "142px" }}
+          className="nav-buttons-minwidth"
+        >
           {isDestViewOpen && (
             <Buttons
               w="auto"
@@ -264,7 +319,7 @@ function App() {
                 src={backArrowSvg}
                 style={{ marginRight: "8px" }}
               />
-              Back to trips
+              <div className="back-button-text"> Back to trips</div>
             </Buttons>
           )}
         </div>
@@ -276,10 +331,13 @@ function App() {
               src={getButtonIcon()}
               style={{ marginRight: "8px" }}
             />
-            {getButtonText()}
+            <div style={{ textWrap: "nowrap" }}>{getButtonText()}</div>
           </Buttons>
         </div>
-        <div style={{ minWidth: "142px", marginRight: "4vw" }}></div>
+        <div
+          style={{ minWidth: "142px", marginRight: "4vw" }}
+          className="nav-buttons-minwidth"
+        ></div>
       </NavHeader>
       <div
         ref={containerRef}
