@@ -1,5 +1,7 @@
 # Trip Planner Project
 
+![Trip Planner App Screenshot](public/thumb.png)
+
 An app that allow users to plan their trips, each trip containing multiple destinations.
 
 The app utlizes geoinfo.org to fetch location information, pixabay.com to fetch pictures of locations, and finally weatherbit.io to fetch weather information for locations.
