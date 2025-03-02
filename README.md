@@ -21,6 +21,10 @@ The weatherbit.io returns 7 days forcast starting from the request date with the
 2. description
 3. icon
 
+## Requierments
+
+Node.js -- tested on version `23.7`
+
 ## How to run
 
 1. add a `.env` file at the root of the project directory.
