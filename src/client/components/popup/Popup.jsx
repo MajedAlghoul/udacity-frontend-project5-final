@@ -70,7 +70,7 @@ function Popup({ closePopup, id, destMode, editObject, setEditObject }) {
   // function that handles dests addition/edit
   const addDestOnClick = useCallback(async () => {
     if (searchRef.current.value === "" || loc === null) {
-      alert("please add trip title");
+      alert("please select a proper destination");
     } else if (addTripDate === "") {
       alert("please add destination date");
     } else {
