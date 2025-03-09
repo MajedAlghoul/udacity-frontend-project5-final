@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState, useEffect } from "react";
 import "./App.scss";
-import NoItemsCard from "../components/noItemsCard/noItemsCard";
+import NoItemsCard from "../components/noItemsCard/NoItemsCard";
 import NavHeader from "../components/navHeader/NavHeader";
 import Buttons from "../components/buttons/Buttons";
 import plusSvg from "../assets/plus.svg";

@@ -7,7 +7,7 @@ import { useCallback, useRef, useEffect, useState } from "react";
 import FancyDatePicker from "../fancyDatePicker/FancyDatePicker";
 import InputField from "../inputField/InputField";
 import CtaButtons from "../ctaButtons/CtaButtons";
-import InputTextArea from "../inputTextArea/inputTextArea";
+import InputTextArea from "../inputTextArea/InputTextArea";
 import CityInputField from "../cityInputField/CityInputField";
 import { useTrips } from "../../hooks/useTrips";
 import { format, startOfDay } from "date-fns";
